@@ -1,0 +1,22 @@
+---
+# roles/common/tasks/main.yml
+- name: Add user
+  user:
+    name: jhon
+    shell: /bin/bash
+    groups: admin
+    append: yes
+  tags:
+    - users
+
+- name: authorized key jhon
+  authorized_key: user=jhon key="{{ lookup('file', 'public_keys/jhon.pub') }}"
+  tags:
+    - ssh-keys
+
+- name: Allow admin users to sudo without a password
+  lineinfile:
+    dest: "/etc/sudoers"
+    state: "present"
+    regexp: "^%admin"
+    line: "%admin ALL=(ALL) NOPASSWD: ALL"
